@@ -1,0 +1,17 @@
+<!-- (submit)="submitLogin(loginForm)" -->
+<!-- <form class="needs-validation" novalidate>
+    <div class="row">
+    <div class="col-md-6 mb-3 common-form"> 
+-->
+
+<form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+    <div class="common-form">
+        <input type="text" formControlName="username" class="form-input form-control" placeholder="Enter Username"
+            required="required">
+        <!-- <div class="valid-feedback">
+        Ok
+    </div> -->
+        <input type="text" formControlName="password" class="form-input form-control" style="-webkit-text-security: square" placeholder="Enter Password" required="" />
+        <button class="form-input btn-md btn-secondary form-control" id="BtnLogin">Login</button>
+    </div>
+</form>

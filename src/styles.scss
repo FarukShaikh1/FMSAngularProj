@@ -1,0 +1,52 @@
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+       height: 100%;
+}
+
+body {
+       margin: 0;
+       font-family: Roboto, "Helvetica Neue", sans-serif;
+       background-image: url('assets/Image/Background.jpg');
+       background-repeat: no-repeat;
+       background-attachment: fixed;
+       background-size: cover;
+       background-position: center;
+
+}
+
+.form-fields-container {
+       margin-top: 20px;
+       display: flex;
+       gap: 10px;
+}
+
+.form-field {
+       flex: 1;
+       margin: 0;
+}
+
+
+.table-container {
+       overflow-x: auto;
+}
+
+table {
+       width: 100%;
+       overflow-x: auto;
+}
+
+th,
+td {
+       width: 500px;
+}
+
+// body{
+//     font-family:'Times New Roman', Times, serif;
+//       background-image: url('assets/Image/Background.jpg');
+//       background-repeat: no-repeat;
+//       background-attachment: fixed;
+//       background-position: center;
+//       background-size: cover;
+// }

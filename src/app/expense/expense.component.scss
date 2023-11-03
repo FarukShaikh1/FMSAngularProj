@@ -1,0 +1,66 @@
+button {
+    margin: 5px;
+}
+
+.main-body {
+    max-width: 90%;
+    padding-top: 1%;
+    margin: 0 auto;
+
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+.example-section {
+    display: inline;
+}
+
+li {
+    display: inline;
+
+}
+
+.grid {
+    overflow-x: auto;
+    padding-top: 10px;
+}
+
+.filters {
+    padding-right: 25px;
+    padding-top: 25px;
+    width: auto;
+}
+
+.form-fields-container {
+    margin-top: 20px;
+    display: flex;
+    /* Use Flexbox to arrange elements horizontally */
+    gap: 10px;
+    /* Small space between form fields */
+}
+
+.form-field {
+    flex: 1;
+    /* Allow form fields to grow and fill available space */
+    margin: 0;
+    /* Remove any default margin */
+}
+
+.table-container {
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
+    // max-width: 100%; /* Limit the container's width to its parent's width */
+}
+
+/* Ensure that the table takes the full available width */
+table {
+    width: auto;
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
+}
+
+th,
+td {
+    width: auto;
+}

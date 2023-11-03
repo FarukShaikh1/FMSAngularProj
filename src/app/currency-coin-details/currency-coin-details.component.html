@@ -1,0 +1,62 @@
+<div mat-dialog-title>Collection Coin Details</div>
+<form [formGroup]="currencyCoinDetailsForm" (ngSubmit)="submitCurrencyCoinDetails()" enctype="multipart/form-data">
+    <div class="container">
+        <div class="form-container">
+            <div class="row">
+                <mat-form-field style="display: none;">
+                    <mat-label>collectionCoinId</mat-label>
+                    <input matInput formControlName="collectionCoinId">
+                    <input matInput formControlName="assetId">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Collection Coin Name</mat-label>
+                    <input matInput formControlName="collectionCoinName">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Country</mat-label>
+                    <mat-select formControlName="countryId">
+                        <mat-option *ngFor="let item of countryList"
+                            [value]="item.CommonListItemId">{{item.ListItemName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="row">
+                <mat-form-field appearance="outline">
+                    <mat-label>Mobile Number</mat-label>
+                    <input matInput formControlName="mobileNumber">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Contact Number</mat-label>
+                    <input matInput formControlName="contactNumber">
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field class="example-full-width">
+                    <mat-label>Address of a person</mat-label>
+                    <textarea matInput placeholder="Ex. It makes me feel..." formControlName="address"></textarea>
+                </mat-form-field>
+            </div>
+            <!-- <div class="row">
+                <mat-radio-group aria-label="Select an option" formControlName="gender">
+                    <mat-label><b>Select Gender</b></mat-label>
+                    <mat-radio-button value="M">Male</mat-radio-button>
+                    <mat-radio-button value="F">Female</mat-radio-button>
+                </mat-radio-group>
+            </div> -->
+        </div>
+        <div class="image-container">
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" formControlName="image">
+            <div class="drop-container" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+                <div id="image">
+                    <img [src]="selectedImage">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button color="primary" type="submit">{{ data ? 'Update' : 'Save' }}</button>
+        <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button type="reset">Reset</button>
+    </div>
+</form>

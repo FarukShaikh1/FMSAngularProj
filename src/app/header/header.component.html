@@ -1,0 +1,29 @@
+<mat-toolbar color="primary">
+  <div class="dropdownmenu">
+    <button mat-icon-button class="example-icon">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div class="submenu" *ngIf="alreadyLoggedIn">
+      <a routerLink="day">Day</a>
+      <a routerLink="expense">Expense</a>
+      <a routerLink="currency-coin">Collection</a>
+      <a routerLink="settings">Settings</a>
+    </div>
+
+  </div>
+  <span>My Collection App</span>
+  <span class="example-spacer"></span>
+  <a routerLink="login" *ngIf="!alreadyLoggedIn"><button mat-raised-button>
+      Login
+    </button>
+  </a>
+  <div class="dropdown" *ngIf="alreadyLoggedIn">
+    <button class="dropbtn">
+      <img src="../../assets/icons/login.png" class="loginImg" alt="">
+    </button>
+    <div class="dropdown-content">
+      <a routerLink="profile">Edit profile</a>
+      <a routerLink="logout">Log out</a>
+    </div>
+  </div>
+</mat-toolbar>

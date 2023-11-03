@@ -1,0 +1,359 @@
+<div class="main-body">
+    <button mat-raised-button (click)="expenseDetails(0)">
+        Add Expense
+    </button>
+    <div class="row form-fields-container">
+        <mat-form-field appearance="outline" class="form-field">
+            <mat-label>From Date</mat-label>
+            <input matInput [value]="fromDate" [matDatepicker]="picker1" appearance="outline"
+                (dateChange)="filterGridByFromDate($event)">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1 startView="month" [startAt]="fromDate"></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="form-field">
+            <mat-label>To Date</mat-label>
+            <input matInput [value]="toDate" [matDatepicker]="picker2" appearance="outline"
+                (dateChange)="filterGridByToDate($event)">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2 startView="month" [startAt]="toDate"></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Source or reason</mat-label>
+            <input type="text" placeholder="Type something" aria-label="Source and reasons" matInput
+                [matAutocomplete]="auto" (input)="onSourceOrReasonChange($event)">
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of sourceOrReasonList" [value]="option.Name"
+                    (onSelectionChange)="filterGridBySource($event)">
+                    {{option.Name}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Min amount</mat-label>
+            <input matInput (input)="filterGridByMinAmount($event)" (keydown)="validateAmount($event)">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Max amount</mat-label>
+            <input matInput (input)="filterGridByMaxAmount($event)" (keydown)="validateAmount($event)">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Mode of transaction</mat-label>
+            <mat-select multiple (selectionChange)="filterGridByMode($event)" >
+                <mat-option *ngFor="let item of modeOfTransactionList"
+                    [value]="item.ListItemName">{{item.ListItemName}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+    </div>
+
+    <mat-tab-group (selectedTabChange)="tabChange($event)" [selectedIndex]="selectedTabIndex" animationDuration="0ms"
+        mat-stretch-tabs="false" mat-align-tabs="start">
+
+        <mat-tab label="Expense">
+            <div *ngIf="selectedTabIndex==0">
+                <div class="table-container">
+                    <table mat-table [dataSource]="dataSource" matSort>
+
+                        <ng-container matColumnDef="expenseId">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+                            <td mat-cell *matCellDef="let row"> {{row.ExpenseId}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="expenseDate">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> ExpenseDate </th>
+                            <td mat-cell *matCellDef="let row"> {{row.ExpenseDate|date:"dd MMM YYY"}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="sourceOrReason">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Source/Reason
+                            </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForText(row.Purpose)">
+                                {{row.SourceOrReason}} </td>
+                        </ng-container>
+
+
+                        <ng-container matColumnDef="description">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForText(row.Purpose)">
+                                {{row.Description}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="modeOfTransaction">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> ModeOfTransaction
+                            </th>
+                            <td mat-cell *matCellDef="let row"> {{row.ModeOfTransaction}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="credit">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Credit</th>
+                            <td mat-cell *matCellDef="let row" style="color:#129D0A; FONT-WEIGHT: BOLD">
+                                {{row.Credit!=0?row.Credit:''}} </td>
+                            <td mat-footer-cell *matFooterCellDef> {{getTotalCost() | currency}} </td>
+
+                        </ng-container>
+                        <ng-container matColumnDef="debit">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Debit </th>
+                            <td mat-cell *matCellDef="let row" style="color:#F00; FONT-WEIGHT: BOLD">
+                                {{row.Debit!=0?row.Debit:''}} </td>
+                            <td mat-footer-cell *matFooterCellDef> {{getTotalCost() | currency}} </td>
+
+                        </ng-container>
+
+                        <ng-container matColumnDef="edit">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                            <td mat-cell *matCellDef="let row" style="width:10px">
+                                <button mat-icon-button color="primary" (click)="expenseDetails(row.ExpenseId)">
+                                    <mat-icon>edit </mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="delete">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                            <td mat-cell *matCellDef="let row" style="width:10px">
+                                <button mat-icon-button color="warn" (click)="deleteExpense(row.ExpenseId)"
+                                    [disabled]="row.IsEditable">
+                                    <mat-icon> delete</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        <!-- <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr> -->
+
+                        <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="4">No data is available.</td>
+                        </tr>
+                    </table>
+                </div>
+                <mat-paginator [pageSizeOptions]="[7,1,10, 15, 25, 100,1000]"
+                    aria-label="Select page of users"></mat-paginator>
+            </div>
+        </mat-tab>
+
+        <mat-tab label="Summary">
+            <div *ngIf="selectedTabIndex==1">
+                <div class="table-container">
+                    <table mat-table [dataSource]="dataSource" matSort>
+                        <ng-container matColumnDef="expenseId">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+                            <td mat-cell *matCellDef="let row"> {{row.ExpenseId}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="expenseDate">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:200px;"> Expense Date
+                            </th>
+                            <td mat-cell *matCellDef="let row" style="width:200px;"> {{row.ExpenseDate|date:"dd MMM
+                                YYY"}} </td>
+                            <!-- <td mat-footer-cell *matFooterCellDef> Total </td> -->
+                        </ng-container>
+
+                        <ng-container matColumnDef="sourceOrReason">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Source/Reason
+                            </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForText(row.Purpose)">
+                                {{row.SourceOrReason}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="description">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 200px;"> Description
+                            </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForText(row.Purpose)">
+                                {{row.Description}} </td>
+                            <td mat-footer-cell *matFooterCellDef> Total </td>
+
+                        </ng-container>
+
+
+                        <ng-container matColumnDef="sbiAccount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> SBI Account</th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.SbiAccount)">
+                                {{row.SbiAccount!=0?row.SbiAccount:''}} </td>
+                            <td mat-footer-cell *matFooterCellDef> {{getTotalCost() | currency}} </td>
+
+                        </ng-container>
+
+                        <ng-container matColumnDef="cash">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Cash </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.Cash)">
+                                {{row.Cash!=0?row.Cash:''}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="other">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Other </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.OtherAmount)">
+                                {{row.OtherAmount!=0?row.OtherAmount:''}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="cbiAccount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> CBI Account</th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.CbiAccount)">
+                                {{row.CbiAccount!=0?row.CbiAccount:''}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="modeOfTransaction">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Mode Of
+                                Transaction</th>
+                            <td mat-cell *matCellDef="let row"> {{row.ModeOfTransaction}} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="totalAmount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Amount</th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.TotalAmount)">
+                                {{row.TotalAmount}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="cashBalance">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Cash Balance</th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.CashBalance)">
+                                {{row.CashBalance}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="sbiBalance">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> SBI Balance</th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.SbiBalance)">
+                                {{row.SbiBalance}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="cbiBalance">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> CBI Balance</th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.CbiBalance)">
+                                {{row.CbiBalance}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="otherBalance">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Other Balance
+                            </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.OtherBalance)">
+                                {{row.OtherBalance}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="totalAvailable">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Available
+                            </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.TotalAvailable)">
+                                {{row.TotalAvailable}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="edit">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                            <td mat-cell *matCellDef="let row">
+                                <button mat-icon-button color="primary" (click)="expenseDetails(row)">
+                                    <mat-icon>edit </mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="delete">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                            <td mat-cell *matCellDef="let row">
+                                <button mat-icon-button color="warn" (click)="deleteExpense(row.ExpenseId)"
+                                    [disabled]="row.IsEditable">
+                                    <mat-icon> delete</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="4">No data is available.</td>
+                        </tr>
+
+                    </table>
+                </div>
+                <mat-paginator [pageSizeOptions]="[7,1,10, 15, 25, 100,1000]"
+                    aria-label="Select page of users"></mat-paginator>
+            </div>
+        </mat-tab>
+
+        <mat-tab label="Report">
+            <div *ngIf="selectedTabIndex==2">
+                <div class="table-container">
+                    <table mat-table [dataSource]="dataSource" matSort>
+                        <ng-container matColumnDef="firstDate">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> First Date
+                            </th>
+                            <td mat-cell *matCellDef="let row" style="width:150px;">
+                                {{row.FirstDate|date:"dd MMM YYY"}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="lastDate">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Date
+                            </th>
+                            <td mat-cell *matCellDef="let row" style="width:150px;">
+                                {{row.LastDate|date:"dd MMM YYY"}}
+                            </td>
+                        </ng-container>
+
+
+                        <ng-container matColumnDef="sourceOrReason">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Source/Reason
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                {{row.SourceOrReason}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="purpose">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Purpose
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                {{row.Purpose}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="takenAmount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Taken Amount </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.TakenAmount)">
+                                {{row.TakenAmount!=0&&row.TakenAmount!=null?row.TakenAmount:''}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="givenAmount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Given Amount </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.GivenAmount)">
+                                {{row.GivenAmount!=0&&row.GivenAmount!=null?row.GivenAmount:''}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="totalAmount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Amount </th>
+                            <td mat-cell *matCellDef="let row" [ngStyle]="getColorForAmount(row.TotalAmount)">
+                                {{row.TotalAmount!=0&&row.TotalAmount!=null?row.TotalAmount:''}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="details">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                            <td mat-cell *matCellDef="let row">
+                                <button mat-icon-button color="primary"
+                                    (click)="getExpenseListBySourceOrReason(row.SourceOrReason)">
+                                    <mat-icon>info</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="4">No data is available.</td>
+                        </tr>
+
+                    </table>
+                </div>
+                <mat-paginator [pageSizeOptions]="[7,1,10, 15, 25, 100,1000]"
+                    aria-label="Select page of users"></mat-paginator>
+            </div>
+        </mat-tab>
+
+
+    </mat-tab-group>
+</div>

@@ -1,0 +1,142 @@
+<mat-tab-group (selectedTabChange)="tabChange($event)" [selectedIndex]="selectedTabIndex" animationDuration="0ms"
+    mat-stretch-tabs="false" mat-align-tabs="start">
+
+    <mat-tab label="Gallary">
+        <div *ngIf="selectedTabIndex==0">
+            <div class="coinPic" *ngFor="let item of imageList">
+                    <mat-card *ngIf="item.CollectionCurrencyType.includes('Coin')" style="margin: 1vh; height: 65vh;">
+                        <mat-card-header >   
+                            <div mat-card-avatar class="example-header-image"></div>
+                            <mat-card-title>{{item.CollectionCoinName}}</mat-card-title>
+                            <mat-card-subtitle>{{item.CurrencyCoinType}}</mat-card-subtitle>
+                        </mat-card-header>
+                        <img mat-card-image src={{basePath+item.ImagePath}} style="height: 50vh; width: 25vh"
+                            onerror="this.src='../../assets/ProjectAttatchments/Collection_Coins/26bea03d-b86a-4a8b-aa09-29a4cc2ee267.png'"
+                            alt={{item.CollectionCoinName}}>
+                        <mat-card-content>
+                            <p>
+                                {{item.Description}}
+                            </p>
+                        </mat-card-content>
+                        <mat-card-actions>
+                            <button mat-button (click)="currencyCoinDetails(item.CollectionCoinId)">View</button>
+                            <button mat-button>Download</button>
+                            <button mat-button>Edit</button>
+                        </mat-card-actions>
+                    </mat-card>
+
+                    <mat-card *ngIf="!item.CollectionCurrencyType.includes('Coin')"  style="margin: 1vh; height: 65vh;">
+                        <mat-card-header>   
+                            <div mat-card-avatar class="example-header-image"></div>
+                            <mat-card-title>{{item.CollectionCoinName}}</mat-card-title>
+                            <mat-card-subtitle>{{item.CurrencyCoinType}}</mat-card-subtitle>
+                        </mat-card-header>
+                        <img mat-card-image src={{basePath+item.ImagePath}} style="height: 50vh; width: auto"
+                            onerror="this.src='../../assets/ProjectAttatchments/Collection_Coins/f4e3fdbb-7e39-453a-a8ef-7c888a12cb7c.png'"
+                            alt={{item.CollectionCoinName}}>
+                        <mat-card-content>
+                            <p>
+                                {{item.Description}}
+                            </p>
+                        </mat-card-content>
+                        <mat-card-actions>
+                            <button mat-button (click)="currencyCoinDetails(item.CollectionCoinId)">View</button>
+                            <button mat-button>Download</button>
+                            <button mat-button>Edit</button>
+                        </mat-card-actions>
+                    </mat-card>
+        </div>
+        </div>
+    </mat-tab>
+    <mat-tab label="Gallary">
+        <div *ngIf="selectedTabIndex==1">
+
+            <mat-grid-list cols="7">
+                <mat-grid-tile *ngFor="let item of imageList" [rowspan]="3" [colspan]="item.CollectionCurrencyType.includes('Coin')?1:2">
+
+                    <mat-card *ngIf="item.CollectionCurrencyType.includes('Coin')">
+                        <mat-card-header style="height: 100px;">   
+                            <div mat-card-avatar class="example-header-image"></div>
+                            <mat-card-title>{{item.CollectionCoinName}}</mat-card-title>
+                            <mat-card-subtitle>{{item.CurrencyCoinType}}</mat-card-subtitle>
+                        </mat-card-header>
+                        <img mat-card-image src={{basePath+item.ImagePath}} style="height: 50vh; width: auto"
+                            onerror="this.src='../../assets/ProjectAttatchments/Collection_Coins/26bea03d-b86a-4a8b-aa09-29a4cc2ee267.png'"
+                            alt={{item.CollectionCoinName}}>
+                        <mat-card-content>
+                            <p>
+                                {{item.Description}}
+                            </p>
+                        </mat-card-content>
+                        <mat-card-actions>
+                            <button mat-button (click)="currencyCoinDetails(item.CollectionCoinId)">View</button>
+                            <button mat-button>Download</button>
+                            <button mat-button>Edit</button>
+                        </mat-card-actions>
+                    </mat-card>
+
+                    <mat-card *ngIf="!item.CollectionCurrencyType.includes('Coin')">
+                        <mat-card-header style="height: 100px;">   
+                            <div mat-card-avatar class="example-header-image"></div>
+                            <mat-card-title>{{item.CollectionCoinName}}</mat-card-title>
+                            <mat-card-subtitle>{{item.CurrencyCoinType}}</mat-card-subtitle>
+                        </mat-card-header>
+                        <img mat-card-image src={{basePath+item.ImagePath}} style="height: 50vh; width: auto"
+                            onerror="this.src='../../assets/ProjectAttatchments/Collection_Coins/f4e3fdbb-7e39-453a-a8ef-7c888a12cb7c.png'"
+                            alt={{item.CollectionCoinName}}>
+                        <mat-card-content>
+                            <p>
+                                {{item.Description}}
+                            </p>
+                        </mat-card-content>
+                        <mat-card-actions>
+                            <button mat-button (click)="currencyCoinDetails(item.CollectionCoinId)">View</button>
+                            <button mat-button>Download</button>
+                            <button mat-button>Edit</button>
+                        </mat-card-actions>
+                    </mat-card>
+                </mat-grid-tile>
+            </mat-grid-list>
+
+        </div>
+    </mat-tab>
+
+    <mat-tab label="Report">
+        <div *ngIf="selectedTabIndex==2">
+            <div class="table-container">
+                <table mat-table [dataSource]="dataSource" matSort>
+
+                    <ng-container matColumnDef="collectionCoinId">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+                        <td mat-cell *matCellDef="let row"> {{row.CollectionCoinId}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="description">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+                        <td mat-cell *matCellDef="let row">
+                            {{row.Description}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="edit">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell *matCellDef="let row" style="width:10px">
+                            <button mat-icon-button color="primary" (click)="currencyCoinDetails(row.ExpenseId)">
+                                <mat-icon>edit </mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    <!-- <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr> -->
+
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell" colspan="4">No data is available.</td>
+                    </tr>
+                </table>
+            </div>
+            <mat-paginator [pageSizeOptions]="[7,10, 15, 25, 100]" aria-label="Select page of users"></mat-paginator>
+        </div>
+
+    </mat-tab>
+</mat-tab-group>

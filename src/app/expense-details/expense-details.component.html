@@ -1,0 +1,91 @@
+<div mat-dialog-title>Expense Details</div>
+<form [formGroup]="expenseDetailsForm" (ngSubmit)="submitExpenseDetails()">
+    <div mat-dialog-content>
+
+        <div class="row">
+            <mat-form-field style="display: none;">
+                <mat-label>expenseId</mat-label>
+                <input matInput formControlName="expenseId">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Choose a date</mat-label>
+                <input matInput [matDatepicker]="picker" appearance="outline" formControlName="expenseDate">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker startView="month" [startAt]="startDate"></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Source or reason</mat-label>
+                <input type="text" placeholder="Type something" aria-label="Source and reasons" matInput
+                    formControlName="sourceOrReason" [matAutocomplete]="auto" (input)="onSourceReasonChange($event)">
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of sourceOrReasonList" [value]="option.Name">
+                        {{option.Name}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+
+        <div class="row">
+            <mat-form-field appearance="outline">
+                <mat-label>SBI Account</mat-label>
+                <input matInput formControlName="sbiAccount" (keydown)="validateAmount($event)">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Cash</mat-label>
+                <input matInput formControlName="cash" (keydown)="validateAmount($event)">
+            </mat-form-field>
+
+        </div>
+        <div class="row">
+            <mat-form-field appearance="outline">
+                <mat-label>CBI Account</mat-label>
+                <input matInput formControlName="cbiAccount" (keydown)="validateAmount($event)">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Other Amount</mat-label>
+                <input matInput formControlName="otherAmount" (keydown)="validateAmount($event)">
+            </mat-form-field>
+        </div>
+        <div>
+            <!-- <mat-form-field class="example-full-width">
+                <mat-label>Description</mat-label>
+                <textarea (change)="onDescriptionChange($event)" matInput placeholder="Ex. It makes me feel..."
+                    formControlName="description"></textarea>
+            </mat-form-field> -->
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Purpose </mat-label>
+                <input type="text" placeholder="Type something" aria-label="purpose" matInput
+                    formControlName="purpose" [matAutocomplete]="auto2" (input)="onPurposeChange($event)">
+                <mat-autocomplete #auto2="matAutocomplete">
+                    <mat-option *ngFor="let option of purposeList" [value]="option.Name">
+                        {{option.Name}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+
+            
+            <mat-form-field class="example-full-width">
+                <mat-label>Description </mat-label>
+                <textarea placeholder="Type something" aria-label="description" matInput
+                    formControlName="description" [matAutocomplete]="auto1" (input)="onDescriptionChange($event)"></textarea>
+                <mat-autocomplete #auto1="matAutocomplete">
+                    <mat-option *ngFor="let option of descriptionList" [value]="option.Name">
+                        {{option.Name}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button color="primary" type="submit"> {{ data ? 'Update' : 'Save'}}</button>
+        <button mat-raised-button type="button" [mat-dialog-close]="false"> Cancel</button>
+        <button mat-raised-button type="reset"> Reset</button>
+    </div>
+
+</form>
